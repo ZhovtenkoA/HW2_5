@@ -13,30 +13,28 @@ async def get_exchange_rates(days):
     async with aiohttp.ClientSession() as session:
         current_date = start_date
         while current_date <= end_date:
-            formatted_date = current_date.strftime('%d.%m.%Y')
+            formatted_date = current_date.strftime("%d.%m.%Y")
             url = f"https://api.privatbank.ua/p24api/exchange_rates?json&date={formatted_date}"
             async with session.get(url) as response:
                 if response.status == 200:
                     data = await response.json()
                     rates = {
                         formatted_date: {
-                            'EUR': {
-                                'sale': None,
-                                'purchase': None
-                            },
-                            'USD': {
-                                'sale': None,
-                                'purchase': None
-                            }
+                            "EUR": {"sale": None, "purchase": None},
+                            "USD": {"sale": None, "purchase": None},
                         }
                     }
-                    for rate in data['exchangeRate']:
-                        if rate['currency'] == 'EUR':
-                            rates[formatted_date]['EUR']['sale'] = rate['saleRate']
-                            rates[formatted_date]['EUR']['purchase'] = rate['purchaseRate']
-                        elif rate['currency'] == 'USD':
-                            rates[formatted_date]['USD']['sale'] = rate['saleRate']
-                            rates[formatted_date]['USD']['purchase'] = rate['purchaseRate']
+                    for rate in data["exchangeRate"]:
+                        if rate["currency"] == "EUR":
+                            rates[formatted_date]["EUR"]["sale"] = rate["saleRate"]
+                            rates[formatted_date]["EUR"]["purchase"] = rate[
+                                "purchaseRate"
+                            ]
+                        elif rate["currency"] == "USD":
+                            rates[formatted_date]["USD"]["sale"] = rate["saleRate"]
+                            rates[formatted_date]["USD"]["purchase"] = rate[
+                                "purchaseRate"
+                            ]
                     exchange_rates.append(rates)
 
             current_date += timedelta(days=1)
@@ -44,11 +42,13 @@ async def get_exchange_rates(days):
     return exchange_rates
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='Get exchange rates for the last N days.')
+        description="Get exchange rates for the last N days."
+    )
     parser.add_argument(
-        'days', type=int, help='number of days to retrieve exchange rates (maximum 10)')
+        "days", type=int, help="number of days to retrieve exchange rates (maximum 10)"
+    )
     args = parser.parse_args()
 
     if args.days > 10:
